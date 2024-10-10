@@ -3,11 +3,17 @@ package com.example.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.Data;
+import jakarta.persistence.Table;
+import lombok.*;
 
-
-@Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@ToString
+@EqualsAndHashCode
+@Builder
+@Table(name = "users")
 public class User {
 
     @Id
