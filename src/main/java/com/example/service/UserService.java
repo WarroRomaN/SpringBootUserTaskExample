@@ -12,4 +12,8 @@ public interface UserService {
     List<User> save(List<User> users);
 
     List<User> findAll();
+
+    User update(Long id, User user);
+
+    void delete(long id);
 }
