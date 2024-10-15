@@ -7,12 +7,9 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor
 @Builder
 @Table(name = "users")
 public class User {

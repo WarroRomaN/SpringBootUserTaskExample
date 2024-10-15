@@ -1,7 +1,6 @@
 package com.example;
 
-import com.example.entity.User;
-import com.example.mapper.UserMapper;
+import com.example.dto.UserDTO;
 import com.example.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +13,9 @@ import java.util.stream.IntStream;
 @SpringBootApplication
 public class SpringBootSimpleExample implements CommandLineRunner {
 
+    private static final String DOT = ".";
+    private static final String AT = "@";
+    private static final String USER = "user";
     private final Random random = new Random();
     private final UserService userService;
 
@@ -34,12 +36,12 @@ public class SpringBootSimpleExample implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        List<User> users = IntStream.range(0,9).mapToObj(operand -> {
-            String username = "user" + operand;
+        List<UserDTO> users = IntStream.range(0, 9).mapToObj(operand -> {
+            String username = USER + operand;
             String firstName = FIRST_NAMES.get(random.nextInt(FIRST_NAMES.size()));
             String lastName = LAST_NAMES.get(random.nextInt(LAST_NAMES.size()));
-            String email = firstName + "." + lastName + "@" + EMAILS.get(random.nextInt(EMAILS.size()));
-            return User.builder()
+            String email = firstName + DOT + lastName + AT + EMAILS.get(random.nextInt(EMAILS.size()));
+            return UserDTO.builder()
                     .username(username)
                     .password(username)
                     .firstName(firstName)
@@ -49,6 +51,6 @@ public class SpringBootSimpleExample implements CommandLineRunner {
         }).toList();
 
         users = userService.save(users);
-        users.stream().map(UserMapper::toDTO).forEach(System.out::println);
+        users.forEach(System.out::println);
     }
 }
