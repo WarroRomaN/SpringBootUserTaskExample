@@ -43,7 +43,6 @@ public class SpringBootSimpleExample implements CommandLineRunner {
             String email = firstName + DOT + lastName + AT + EMAILS.get(random.nextInt(EMAILS.size()));
             return UserDTO.builder()
                     .username(username)
-                    .password(username)
                     .firstName(firstName)
                     .lastName(lastName)
                     .email(email)

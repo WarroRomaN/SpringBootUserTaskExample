@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceUnitTest {
+public class UserServiceTest {
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -23,37 +23,18 @@ public class UserServiceUnitTest {
 
     @Test
     void createUserShouldReturnCreatedUser() {
-        User user = User.builder()
-                .username("user1")
-                .password("password1")
-                .firstName("firstName")
-                .lastName("lastName")
-                .email("email.com")
-                .build();
-        User createUser = User.builder()
-                .id(123L)
-                .username("user1")
-                .password("password1")
-                .firstName("firstName")
-                .lastName("lastName")
-                .email("email.com")
-                .build();
+        User user = User.builder().username("user1").firstName("firstName").lastName("lastName").email("email.com").build();
+        User createUser = User.builder().id(123L).username("user1").firstName("firstName").lastName("lastName").email("email.com").build();
         given(userRepository.save(user)).willReturn(createUser);
 
-        UserDTO userDTO = UserDTO.builder()
-                .username("user1")
-                .password("password1")
-                .firstName("firstName")
-                .lastName("lastName")
-                .email("email.com")
-                .build();
+        UserDTO userDTO = UserDTO.builder().username("user1").firstName("firstName").lastName("lastName").email("email.com").build();
         UserDTO createdUserDTO = userService.save(userDTO);
 
         Assert.isTrue(createdUserDTO.getLastName().equals(userDTO.getLastName()), "Last name not match");
         Assert.isTrue(createdUserDTO.getFirstName().equals(userDTO.getFirstName()), "First name not match");
         Assert.isTrue(createdUserDTO.getEmail().equals(userDTO.getEmail()), "Email not match");
         Assert.isTrue(createdUserDTO.getUsername().equals(userDTO.getUsername()), "Username not match");
-        Assert.isTrue(createdUserDTO.getPassword().equals(userDTO.getPassword()), "Password not match");
+
     }
 
 }
