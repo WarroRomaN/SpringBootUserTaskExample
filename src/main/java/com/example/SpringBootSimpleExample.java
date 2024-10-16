@@ -1,16 +1,20 @@
 package com.example;
 
 import com.example.dto.UserDTO;
+//import com.example.service.ActivityService;
 import com.example.service.UserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
 @SpringBootApplication
+@Log4j2
 public class SpringBootSimpleExample implements CommandLineRunner {
 
     private static final String DOT = ".";
@@ -18,6 +22,7 @@ public class SpringBootSimpleExample implements CommandLineRunner {
     private static final String USER = "user";
     private final Random random = new Random();
     private final UserService userService;
+//    private final ActivityService activityService;
 
     public SpringBootSimpleExample(UserService userService) {
         this.userService = userService;
@@ -49,7 +54,10 @@ public class SpringBootSimpleExample implements CommandLineRunner {
                     .build();
         }).toList();
 
-        users = userService.save(users);
-        users.forEach(System.out::println);
+//        users = userService.save(users);
+//        users.forEach(user -> log.info(user.toString()));
+
+//        IntStream.range(0, 9).forEach(operand -> log.info(activityService.getRandomActivity()));
     }
+
 }

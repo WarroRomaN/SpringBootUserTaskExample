@@ -16,7 +16,7 @@ import static org.mockito.BDDMockito.given;
 public class UserServiceTest {
 
     @InjectMocks
-    private UserServiceImpl userService;
+    private UserService userService;
 
     @Mock
     private UserRepository userRepository;
@@ -30,10 +30,10 @@ public class UserServiceTest {
         UserDTO userDTO = UserDTO.builder().username("user1").firstName("firstName").lastName("lastName").email("email.com").build();
         UserDTO createdUserDTO = userService.save(userDTO);
 
-        Assert.isTrue(createdUserDTO.getLastName().equals(userDTO.getLastName()), "Last name not match");
-        Assert.isTrue(createdUserDTO.getFirstName().equals(userDTO.getFirstName()), "First name not match");
-        Assert.isTrue(createdUserDTO.getEmail().equals(userDTO.getEmail()), "Email not match");
-        Assert.isTrue(createdUserDTO.getUsername().equals(userDTO.getUsername()), "Username not match");
+        Assert.isTrue(createdUserDTO.lastName().equals(userDTO.lastName()), "Last name not match");
+        Assert.isTrue(createdUserDTO.firstName().equals(userDTO.firstName()), "First name not match");
+        Assert.isTrue(createdUserDTO.email().equals(userDTO.email()), "Email not match");
+        Assert.isTrue(createdUserDTO.username().equals(userDTO.username()), "Username not match");
 
     }
 

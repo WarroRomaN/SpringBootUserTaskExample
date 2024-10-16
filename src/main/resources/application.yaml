@@ -7,6 +7,19 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    show-sql: true
+
 server:
   port: 8181
+
+external:
+  boredapi:
+    activity: https://bored.api.lewagon.com/api/activity/
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        orm:
+          jdbc:
+            bind: TRACE

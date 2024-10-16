@@ -1,0 +1,28 @@
+Requirements:
+Technology Stack:
+Java
+Spring Boot
+Maven
+RESTful API design
+Groovy Spock for testing (can be anything else)
+API Endpoints:
+Get Slot Info
+Spin
+Business Logic:
+The slot machine has 3 reels
+Each reel can have one of the following symbols: A, B, C, D, E
+Each symbol has it’s own multiplier applied if was won
+User should be able to choose the bet he wants to play with
+Win combination is 3 the same symbols in one line
+The spin result should be randomly generated
+If the spin result is a winning combination, the user wins an amount calculated as betAmount * multiplier
+Algorithm for Reels Randomization
+Implement a randomization algorithm that generates the result for the 3 reels independently
+Ensure fairness in the randomization process
+Testing
+Define and implement all required level of testing
+Expectations
+Only result matters. All available tools can be used to receive the final code as soon as possible.
+
+has context menu
+

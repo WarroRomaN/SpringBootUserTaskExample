@@ -13,9 +13,13 @@ public class UserMapper {
     }
 
     public static UserDTO toDTO(User user) {
-        UserDTO dto = new UserDTO();
-        BeanUtils.copyProperties(user, dto);
-        return dto;
+        return UserDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .lastName(user.getLastName())
+                .firstName(user.getFirstName())
+                .build();
     }
 
 }

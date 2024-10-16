@@ -2,20 +2,62 @@ package com.example.service;
 
 import com.example.dto.UserDTO;
 import com.example.entity.User;
+import com.example.exception.UserNotFoundException;
+import com.example.mapper.UserMapper;
+import com.example.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public interface UserService {
+@Service
+public class UserService {
 
-    UserDTO save(UserDTO user);
+    private final UserRepository userRepository;
 
-    List<UserDTO> save(List<UserDTO> users);
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-    List<UserDTO> findAll();
+    public UserDTO save(UserDTO userDTO) {
+        return UserMapper.toDTO(userRepository.save(UserMapper.toEntity(userDTO)));
+    }
 
-    UserDTO update(Long id, UserDTO user);
+    public List<UserDTO> save(List<UserDTO> users) {
+        return userRepository.saveAll(users.stream()
+                        .map(UserMapper::toEntity)
+                        .toList()).stream()
+                .map(UserMapper::toDTO)
+                .toList();
+    }
 
-    void delete(long id);
+    public List<UserDTO> findAll() {
+        return userRepository.findAll().stream()
+                .map(UserMapper::toDTO)
+                .toList();
+    }
 
-    UserDTO find(long id);
+    public UserDTO update(Long id, UserDTO userDTO) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + id));
+
+
+        existingUser.setFirstName(userDTO.firstName());
+        existingUser.setLastName(userDTO.lastName());
+        existingUser.setEmail(userDTO.email());
+        existingUser.setUsername(userDTO.username());
+
+        return UserMapper.toDTO(userRepository.save(existingUser));
+    }
+
+    public void delete(long id) {
+        userRepository.deleteById(id);
+    }
+
+    public UserDTO find(long id) {
+        return UserMapper.toDTO(userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id " + id)));
+    }
+
 }

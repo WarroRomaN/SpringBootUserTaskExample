@@ -1,10 +1,13 @@
 package com.example.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -21,5 +24,9 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
+//    @OneToMany(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "id")
+//    @Nullable
+//    private List<Activity> completedActivities;
 
 }

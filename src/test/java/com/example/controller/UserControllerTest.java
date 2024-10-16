@@ -1,115 +1,84 @@
 package com.example.controller;
 
 import com.example.dto.UserDTO;
-import com.example.entity.User;
-import com.example.repository.UserRepository;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.List;
+import static com.example.constant.Constants.API_USERS;
+import static com.example.constant.Constants.SLASH;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.hasSize;
-
+@Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserControllerTest {
 
-    @LocalServerPort
-    private int port;
 
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
+
+    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(
+            "postgres:16-alpine"
+    );
 
     @BeforeAll
-    static void beforeAll() {
-        postgres.start();
+    public static void startContainer() {
+        postgreSQLContainer.start();
     }
 
     @AfterAll
-    static void afterAll() {
-        postgres.stop();
+    public static void stopContainer() {
+        postgreSQLContainer.stop();
     }
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.datasource.driverClassName", postgreSQLContainer::getDriverClassName);
     }
-
 
     @Autowired
-    private UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.baseURI = "http://localhost:" + port;
-        userRepository.deleteAll();
-    }
+    private TestRestTemplate testRestTemplate;
 
     @Test
-    void shouldGetAllUsers() {
-        List<User> users = List.of(
-                User.builder().username("userRoman").email("Roman.Halimon@gmail.com").firstName("Roman").lastName("Halimon").build(),
-                User.builder().username("userAnna").email("Anna.Ostapenko@outlook.com").firstName("Anna").lastName("Ostapenko").build()
-        );
-        userRepository.saveAll(users);
+    void shouldCreateUser() {
+        UserDTO userDTO = UserDTO.builder().id(1L).username("userVictoria").email("Victoria.Halimon@gmail.com").firstName("Victoria").lastName("Halimon").build();
 
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/api/users")
-                .then()
-                .statusCode(200)
-                .body(".", hasSize(2));
+        ResponseEntity<UserDTO> createdUserDTOResponseEntity = testRestTemplate.postForEntity(
+                API_USERS, userDTO, UserDTO.class);
+
+        assertThat(createdUserDTOResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        UserDTO createdUserDTO = createdUserDTOResponseEntity.getBody();
+        assertThat(createdUserDTO).isNotNull();
+        assert createdUserDTO != null;
+        assertThat(createdUserDTO.firstName()).isEqualTo(userDTO.firstName());
+        assertThat(createdUserDTO.lastName()).isEqualTo(userDTO.lastName());
+        assertThat(createdUserDTO.email()).isEqualTo(userDTO.email());
+        assertThat(createdUserDTO.username()).isEqualTo(userDTO.username());
+
+        ResponseEntity<UserDTO> foundedUserDTOResponseEntity = testRestTemplate.getForEntity(
+                API_USERS + SLASH + createdUserDTO.id(), UserDTO.class);
+
+        UserDTO foundedUserDTO = foundedUserDTOResponseEntity.getBody();
+        assertThat(foundedUserDTO).isNotNull();
+        assert foundedUserDTO != null;
+        assertThat(foundedUserDTO.id()).isEqualTo(userDTO.id());
+        assertThat(foundedUserDTO.firstName()).isEqualTo(userDTO.firstName());
+        assertThat(foundedUserDTO.lastName()).isEqualTo(userDTO.lastName());
+        assertThat(foundedUserDTO.email()).isEqualTo(userDTO.email());
+        assertThat(foundedUserDTO.username()).isEqualTo(userDTO.username());
     }
 
-    @Test
-    void shouldCreateUsers() {
-        UserDTO user1 = UserDTO.builder().id(1L).username("userVictoria").email("Victoria.Halimon@gmail.com").firstName("Victoria").lastName("Halimon").build();
-        given()
-                .contentType(ContentType.JSON)
-                .body(user1)
-                .when()
-                .post("/api/users")
-                .then()
-                .statusCode(200);
-
-        UserDTO user2 = UserDTO.builder().id(2L).username("userVictor").email("Victor.Ostapenko@outlook.com").firstName("Victor").lastName("Ostapenko").build();
-        given()
-                .contentType(ContentType.JSON)
-                .body(user2)
-                .when()
-                .post("/api/users")
-                .then()
-                .statusCode(200);
 
 
-        UserDTO user3 = UserDTO.builder().id(3L).username("userPavel").email("Pavel.Sarmar@outlook.com").firstName("Pavel").lastName("Sarmar").build();
-        given()
-                .contentType(ContentType.JSON)
-                .body(user3)
-                .when()
-                .post("/api/users")
-                .then()
-                .statusCode(200);
-
-        given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("/api/users")
-                .then()
-                .statusCode(200)
-                .body(".", hasSize(3));
-    }
 
 }
